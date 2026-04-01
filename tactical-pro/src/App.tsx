@@ -16,6 +16,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import CategoryPage from './pages/CategoryPage';
 import AuthPage from './pages/AuthPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
 import AgeGateModal from './components/AgeGateModal';
@@ -219,6 +220,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/categoria/:slug" element={<CategoryPage />} />
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route 
           path="/perfil" 
           element={

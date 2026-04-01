@@ -29,6 +29,8 @@ type CustomerFormValues = z.infer<typeof customerSchema>;
 export function CustomerForm({ onToggleLogin, onSuccess }: { onToggleLogin: () => void, onSuccess: () => void }) {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState('');
 
   const { register, handleSubmit, control, watch, formState: { errors } } = useForm<CustomerFormValues>({
     resolver: zodResolver(customerSchema),
@@ -46,6 +48,7 @@ export function CustomerForm({ onToggleLogin, onSuccess }: { onToggleLogin: () =
         email: data.email,
         password: data.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
             full_name: data.fullName,
             cpf: data.cpf,
@@ -56,13 +59,43 @@ export function CustomerForm({ onToggleLogin, onSuccess }: { onToggleLogin: () =
       });
 
       if (error) throw error;
-      onSuccess();
+      setSubmittedEmail(data.email);
+      setSubmitted(true);
     } catch (err: any) {
       setServerError(err.message || 'Falha na comunicação com a Base.');
     } finally {
       setLoading(false);
     }
   };
+
+  // ---- Tela de sucesso inline ----
+  if (submitted) {
+    return (
+      <div className="w-full text-center py-4">
+        <div className="flex justify-center mb-6">
+          <div className="w-20 h-20 rounded-full bg-[#00FF00]/10 border border-[#00FF00]/40 flex items-center justify-center">
+            <Mail className="w-10 h-10 text-[#00FF00]" />
+          </div>
+        </div>
+        <h2 className="text-2xl font-bold text-white mb-4 uppercase tracking-tight">Verifique seu Email</h2>
+        <p className="text-slate-400 text-sm leading-relaxed mb-2">
+          Enviamos um link de confirmação para:
+        </p>
+        <p className="text-[#00FF00] font-bold font-mono mb-6 text-sm break-all">{submittedEmail}</p>
+        <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-left mb-6">
+          <p className="text-slate-300 text-sm leading-relaxed">
+            Clique no link enviado para ativar sua conta. Verifique também a <span className="text-white font-bold">caixa de spam</span> caso não encontre.
+          </p>
+        </div>
+        <button
+          onClick={onToggleLogin}
+          className="w-full py-3 rounded-xl bg-white text-black font-bold uppercase tracking-wider hover:bg-gray-200 transition-all text-sm"
+        >
+          Já confirmei — Entrar no Terminal
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
