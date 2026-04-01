@@ -4,13 +4,21 @@ import {
   Share2,
   Instagram,
   Youtube,
+  User as UserIcon,
+  ShoppingCart
 } from 'lucide-react';
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'motion/react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 
 import Home from './pages/Home';
 import CategoryPage from './pages/CategoryPage';
+import AuthPage from './pages/AuthPage';
+import ProfilePage from './pages/ProfilePage';
 import AgeGateModal from './components/AgeGateModal';
+import CartSidebar from './components/CartSidebar';
+import ProtectedRoute from './components/ProtectedRoute';
+import { useAuth } from './contexts/AuthContext';
+import { useCart } from './contexts/CartContext';
 
 /**
  * Componente Crosshair (Mira HUD)
@@ -155,14 +163,62 @@ const Crosshair = () => {
 };
 
 export default function App() {
+  const { user } = useAuth();
+  const { itemCount, setIsCartOpen } = useCart();
+
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[#2e3e2e]/30 cursor-none">
       <AgeGateModal />
       <Crosshair />
+      <CartSidebar />
       
+      {/* Global Header */}
+      <header className="fixed top-0 left-0 right-0 z-[9000] p-6 flex justify-between items-center pointer-events-none">
+        <Link to="/" className="flex items-center gap-2 text-white pointer-events-auto mix-blend-difference group">
+          <Shield className="w-8 h-8 text-[#00FF00] group-hover:scale-110 transition-transform" />
+          <h1 className="text-xl font-bold tracking-tight hidden sm:block uppercase">Tactical Pro</h1>
+        </Link>
+        <div className="flex items-center gap-4 pointer-events-auto">
+          <Link 
+            to={user ? "/perfil" : "/auth"} 
+            className="w-12 h-12 bg-white/5 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors tooltip relative group"
+            title="Acesso Tático"
+          >
+            <UserIcon className="w-5 h-5 text-white group-hover:text-[#00FF00] transition-colors" />
+            <span className="absolute -bottom-8 bg-black border border-white/10 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              {user ? 'Painel de Operador' : 'Alistamento'}
+            </span>
+          </Link>
+          <button 
+            onClick={() => setIsCartOpen(true)}
+            className="w-12 h-12 bg-white/5 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors relative group"
+            title="Inventário"
+          >
+            <ShoppingCart className="w-5 h-5 text-white group-hover:text-[#00FF00] transition-colors" />
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-[#00FF00] text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
+                {itemCount}
+              </span>
+            )}
+            <span className="absolute -bottom-8 bg-black border border-white/10 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+              Carrinho
+            </span>
+          </button>
+        </div>
+      </header>
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/categoria/:slug" element={<CategoryPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route 
+          path="/perfil" 
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
 
       {/* Footer */}

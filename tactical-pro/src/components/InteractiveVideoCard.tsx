@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Eye, Heart, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
 
 interface InteractiveVideoCardProps {
   id: number;
@@ -21,6 +22,7 @@ export const InteractiveVideoCard: React.FC<InteractiveVideoCardProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const { addToCart, isLoading } = useCart();
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -72,11 +74,15 @@ export const InteractiveVideoCard: React.FC<InteractiveVideoCardProps> = ({
 
         {/* Action Buttons overlay */}
         <div className="absolute inset-x-0 bottom-4 flex justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 z-10">
-          <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white p-3 rounded-full hover:bg-white hover:text-black transition-all">
+          <Link to={`/categoria/${slug}`} className="bg-white/10 backdrop-blur-md border border-white/20 text-white p-3 rounded-full hover:bg-white hover:text-black transition-all">
             <Eye className="w-5 h-5" />
-          </button>
-          <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white p-3 rounded-full hover:bg-white hover:text-black transition-all">
-            <Heart className="w-5 h-5" />
+          </Link>
+          <button 
+            disabled={isLoading}
+            onClick={(e) => { e.preventDefault(); addToCart(slug); }}
+            className="bg-[#00FF00]/20 backdrop-blur-md border border-[#00FF00]/40 text-[#00FF00] p-3 rounded-full hover:bg-[#00FF00] hover:text-black transition-all cursor-pointer disabled:opacity-50"
+          >
+            <ShoppingBag className="w-5 h-5" />
           </button>
         </div>
       </div>
