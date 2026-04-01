@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { IMaskInput } from 'react-imask';
-import { Shield, Lock, Mail, ArrowRight, User, Phone, XCircle } from 'lucide-react';
+import { Shield, Lock, Mail, ArrowRight, User, Phone, XCircle, Loader2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { PasswordStrengthBar } from './PasswordStrengthBar';
 
@@ -39,12 +39,42 @@ export function CustomerForm({ onToggleLogin, onSuccess }: { onToggleLogin: () =
 
   const currentPassword = watch('password', '');
 
+  const [resending, setResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  const startCooldown = () => {
+    setResendCooldown(60);
+    const timer = setInterval(() => {
+      setResendCooldown(prev => {
+        if (prev <= 1) { clearInterval(timer); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const resendConfirmation = async () => {
+    setResending(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: submittedEmail,
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` }
+      });
+      if (error) throw error;
+      startCooldown();
+    } catch (err: any) {
+      setServerError(err.message || 'Erro ao reenviar email.');
+    } finally {
+      setResending(false);
+    }
+  };
+
   const onSubmit = async (data: CustomerFormValues) => {
     setLoading(true);
     setServerError(null);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data: signupData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -59,10 +89,19 @@ export function CustomerForm({ onToggleLogin, onSuccess }: { onToggleLogin: () =
       });
 
       if (error) throw error;
+
+      // Supabase retorna user com identities vazio quando email já cadastrado e não confirmado
+      // Nesse caso ele reenvia o email de confirmação silenciosamente
       setSubmittedEmail(data.email);
       setSubmitted(true);
+      startCooldown();
     } catch (err: any) {
-      setServerError(err.message || 'Falha na comunicação com a Base.');
+      // Email já cadastrado e confirmado = erro direto
+      if (err.message?.includes('already registered') || err.message?.includes('already been registered')) {
+        setServerError('Este email já está cadastrado. Tente fazer login ou recuperar sua senha.');
+      } else {
+        setServerError(err.message || 'Falha na comunicação com a Base.');
+      }
     } finally {
       setLoading(false);
     }
@@ -82,11 +121,33 @@ export function CustomerForm({ onToggleLogin, onSuccess }: { onToggleLogin: () =
           Enviamos um link de confirmação para:
         </p>
         <p className="text-[#00FF00] font-bold font-mono mb-6 text-sm break-all">{submittedEmail}</p>
-        <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-left mb-6">
+        <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-left mb-4">
           <p className="text-slate-300 text-sm leading-relaxed">
             Clique no link enviado para ativar sua conta. Verifique também a <span className="text-white font-bold">caixa de spam</span> caso não encontre.
           </p>
         </div>
+
+        {serverError && (
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-2">
+            <XCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+            <p className="text-xs text-red-400">{serverError}</p>
+          </div>
+        )}
+
+        <button
+          onClick={resendConfirmation}
+          disabled={resending || resendCooldown > 0}
+          className="w-full mb-3 py-3 rounded-xl bg-[#00FF00]/10 border border-[#00FF00]/30 text-[#00FF00] font-bold uppercase tracking-wider hover:bg-[#00FF00]/20 disabled:opacity-50 transition-all text-sm flex items-center justify-center gap-2"
+        >
+          {resending ? (
+            <><Loader2 className="w-4 h-4 animate-spin" /> Reenviando...</>
+          ) : resendCooldown > 0 ? (
+            `Reenviar em ${resendCooldown}s`
+          ) : (
+            'Reenviar Email de Confirmação'
+          )}
+        </button>
+
         <button
           onClick={onToggleLogin}
           className="w-full py-3 rounded-xl bg-white text-black font-bold uppercase tracking-wider hover:bg-gray-200 transition-all text-sm"
