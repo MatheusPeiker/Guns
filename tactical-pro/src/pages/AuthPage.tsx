@@ -47,7 +47,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center pt-20 sm:pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#00FF00]/5 rounded-[100%] blur-[120px] pointer-events-none" />
       
@@ -56,7 +56,7 @@ export default function AuthPage() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-md w-full relative z-10"
       >
-        <div className="bg-[#0a0a0a] border border-white/10 p-8 sm:p-10 rounded-2xl shadow-2xl">
+        <div className="bg-[#0a0a0a] border border-white/10 p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl">
           <div className="flex justify-center mb-8">
             <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
               <Shield className="w-8 h-8 text-[#00FF00]" />

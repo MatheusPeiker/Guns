@@ -115,7 +115,7 @@ export default function ProductScrollExploded() {
   const text2X = useTransform(scrollYProgress, [0.35, 0.45], ["10%", "0%"]);
 
   return (
-    <div ref={containerRef} className="relative h-[250vh] bg-[#050505] w-full">
+    <div ref={containerRef} className="relative h-[200vh] sm:h-[250vh] bg-[#050505] w-full">
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
         
         {/* Loader */}
@@ -137,9 +137,9 @@ export default function ProductScrollExploded() {
           {/* 30% Scroll */}
           <motion.div 
              style={{ opacity: text1Opacity, x: text1X }} 
-             className="absolute top-1/2 left-[5%] md:left-[10%] -translate-y-1/2 w-full max-w-sm px-4"
+             className="absolute top-1/2 left-0 -translate-y-1/2 w-full px-6 sm:px-0 sm:left-[10%] sm:max-w-sm"
           >
-             <h2 className="text-3xl md:text-5xl font-sans tracking-tighter text-white/90 font-bold leading-tight">
+             <h2 className="text-2xl sm:text-3xl md:text-5xl font-sans tracking-tighter text-white/90 font-bold leading-tight">
                Acessórios certos fazem a diferença.
              </h2>
           </motion.div>
@@ -147,9 +147,9 @@ export default function ProductScrollExploded() {
           {/* 60% Scroll */}
           <motion.div 
              style={{ opacity: text2Opacity, x: text2X }} 
-             className="absolute top-1/2 right-[5%] md:right-[10%] -translate-y-1/2 w-full max-w-sm px-4 text-right"
+             className="absolute top-1/2 right-0 -translate-y-1/2 w-full px-6 sm:px-0 sm:right-[10%] sm:max-w-sm text-right"
           >
-             <h2 className="text-3xl md:text-5xl font-sans tracking-tighter text-white/90 font-bold leading-tight">
+             <h2 className="text-2xl sm:text-3xl md:text-5xl font-sans tracking-tighter text-white/90 font-bold leading-tight">
                Monte sua configuração ideal.
              </h2>
           </motion.div>

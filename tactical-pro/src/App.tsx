@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+
+// Detect touch device at runtime (works in the browser)
+const isTouchDevice = () => typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 import { 
   Shield, 
   Share2,
@@ -25,6 +28,8 @@ import { useCart } from './contexts/CartContext';
  * Cria um efeito visual tecnológico que segue o mouse e interage com elementos da página.
  */
 const Crosshair = () => {
+  // Don't render on touch devices at all
+  if (isTouchDevice()) return null;
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   
@@ -101,7 +106,7 @@ const Crosshair = () => {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[9999] flex items-center justify-center"
+          className="fixed top-0 left-0 pointer-events-none z-[9999] flex items-center justify-center hidden md:flex"
           style={{
             x: smoothX,
             y: smoothY,
@@ -166,8 +171,10 @@ export default function App() {
   const { user } = useAuth();
   const { itemCount, setIsCartOpen } = useCart();
 
+  const isTouch = isTouchDevice();
+
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[#2e3e2e]/30 cursor-none">
+    <div className={`min-h-screen bg-[#050505] text-white font-sans selection:bg-[#2e3e2e]/30 cursor-auto md:cursor-none`}>
       <AgeGateModal />
       <Crosshair />
       <CartSidebar />
@@ -224,8 +231,8 @@ export default function App() {
       {/* Footer */}
       <footer className="bg-[#050505] border-t border-white/10 py-12 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            <div className="col-span-1 md:col-span-1">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 text-white mb-6">
                 <Shield className="w-8 h-8" />
                 <h1 className="text-xl font-bold tracking-tight text-white">Tactical Pro</h1>

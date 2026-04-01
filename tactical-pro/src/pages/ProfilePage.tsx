@@ -87,11 +87,11 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#050505] text-white pt-24 sm:pt-32 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
+        <div className="mb-8 sm:mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 border-b border-white/10 pb-6 sm:pb-8">
           <div>
-            <h1 className="text-4xl font-bold uppercase tracking-tighter mb-2">Painel de Controle</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold uppercase tracking-tighter mb-2">Painel de Controle</h1>
             <p className="text-slate-400 font-mono text-sm tracking-widest uppercase">Gerencie sua credencial de operador</p>
           </div>
           <button

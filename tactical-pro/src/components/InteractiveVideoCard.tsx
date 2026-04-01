@@ -27,7 +27,6 @@ export const InteractiveVideoCard: React.FC<InteractiveVideoCardProps> = ({
   const handleMouseEnter = () => {
     setIsHovered(true);
     if (videoRef.current) {
-      // Play the video. Ignore play() promise rejection errors (if any)
       videoRef.current.play().catch(e => console.log('Auto-play prevented', e));
     }
   };
@@ -36,7 +35,23 @@ export const InteractiveVideoCard: React.FC<InteractiveVideoCardProps> = ({
     setIsHovered(false);
     if (videoRef.current) {
       videoRef.current.pause();
-      videoRef.current.currentTime = 0; // Reset to the first frame
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  // Touch: toggle overlay + play/pause video
+  const handleTap = () => {
+    if (videoRef.current) {
+      if (isHovered) {
+        setIsHovered(false);
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      } else {
+        setIsHovered(true);
+        videoRef.current.play().catch(() => {});
+      }
+    } else {
+      setIsHovered(prev => !prev);
     }
   };
 
@@ -45,6 +60,7 @@ export const InteractiveVideoCard: React.FC<InteractiveVideoCardProps> = ({
       whileHover={{ scale: 1.03, y: -5 }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTap}
       className="bg-[#0b0b0b] border border-white/5 rounded-2xl overflow-hidden shadow-2xl transition-all flex flex-col group relative"
     >
       {/* Product Highlight / Glow */}
@@ -72,14 +88,14 @@ export const InteractiveVideoCard: React.FC<InteractiveVideoCardProps> = ({
         
         <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0b] to-transparent opacity-40 z-0 pointer-events-none" />
 
-        {/* Action Buttons overlay */}
-        <div className="absolute inset-x-0 bottom-4 flex justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 z-10">
+        {/* Action Buttons — visible on hover (desktop) or tap (mobile) */}
+        <div className={`absolute inset-x-0 bottom-4 flex justify-center gap-4 transition-all duration-300 z-10 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <Link to={`/categoria/${slug}`} className="bg-white/10 backdrop-blur-md border border-white/20 text-white p-3 rounded-full hover:bg-white hover:text-black transition-all">
             <Eye className="w-5 h-5" />
           </Link>
           <button 
             disabled={isLoading}
-            onClick={(e) => { e.preventDefault(); addToCart(slug); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(slug); }}
             className="bg-[#00FF00]/20 backdrop-blur-md border border-[#00FF00]/40 text-[#00FF00] p-3 rounded-full hover:bg-[#00FF00] hover:text-black transition-all cursor-pointer disabled:opacity-50"
           >
             <ShoppingBag className="w-5 h-5" />
@@ -88,16 +104,16 @@ export const InteractiveVideoCard: React.FC<InteractiveVideoCardProps> = ({
       </div>
       
       {/* Category details */}
-      <div className="p-6 flex flex-col flex-1 relative z-10">
-        <div className="flex justify-between items-start mb-3">
-          <h4 className="font-bold text-2xl leading-tight text-white tracking-tight uppercase">{name}</h4>
+      <div className="p-4 sm:p-6 flex flex-col flex-1 relative z-10">
+        <div className="flex justify-between items-start mb-2 sm:mb-3">
+          <h4 className="font-bold text-xl sm:text-2xl leading-tight text-white tracking-tight uppercase">{name}</h4>
         </div>
         
-        <p className="text-sm text-slate-400 mb-6 flex-1 leading-relaxed">
+        <p className="text-sm text-slate-400 mb-4 sm:mb-6 flex-1 leading-relaxed">
           {description}
         </p>
         
-        <Link to={`/categoria/${slug}`} className="w-full bg-white text-black py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+        <Link to={`/categoria/${slug}`} className="w-full bg-white text-black py-3 sm:py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] text-sm sm:text-base">
           Explorar Equipamentos
         </Link>
       </div>
