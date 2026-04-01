@@ -17,6 +17,7 @@ import Home from './pages/Home';
 import CategoryPage from './pages/CategoryPage';
 import AuthPage from './pages/AuthPage';
 import ProfilePage from './pages/ProfilePage';
+import AdminPage from './pages/AdminPage';
 import AgeGateModal from './components/AgeGateModal';
 import CartSidebar from './components/CartSidebar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -226,6 +227,7 @@ export default function App() {
             </ProtectedRoute>
           } 
         />
+        <Route path="/admin/pedidos" element={<AdminPage />} />
       </Routes>
 
       {/* Footer */}
