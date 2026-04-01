@@ -163,7 +163,7 @@ export default function ProductScrollExploded() {
         <div className="absolute inset-0 z-20 pointer-events-none">
           <motion.div
             style={{ opacity: text1Opacity, x: text1X }}
-            className="absolute top-1/2 left-0 -translate-y-1/2 w-full px-6 sm:px-0 sm:left-[10%] sm:max-w-sm"
+            className="absolute top-[15%] sm:top-[25%] left-0 w-full px-6 sm:px-0 sm:left-[10%] sm:max-w-sm"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans tracking-tighter text-white font-bold leading-tight" style={{ textShadow: '0 4px 30px rgba(0,0,0,0.8)' }}>
               Acessórios certos fazem a diferença.
@@ -172,7 +172,7 @@ export default function ProductScrollExploded() {
 
           <motion.div
             style={{ opacity: text2Opacity, x: text2X }}
-            className="absolute top-1/2 right-0 -translate-y-1/2 w-full px-6 sm:px-0 sm:right-[10%] sm:max-w-sm text-right"
+            className="absolute bottom-[15%] sm:bottom-[25%] right-0 w-full px-6 sm:px-0 sm:right-[10%] sm:max-w-sm text-right"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans tracking-tighter text-white font-bold leading-tight" style={{ textShadow: '0 4px 30px rgba(0,0,0,0.8)' }}>
               Monte sua configuração ideal.

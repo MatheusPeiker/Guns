@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useRef, useState, useEffect } from 'react';
+import { motion, useInView } from 'motion/react';
 import { Eye, Heart, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
@@ -23,36 +23,27 @@ export const InteractiveVideoCard: React.FC<InteractiveVideoCardProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const { addToCart, isLoading } = useCart();
+  const isInView = useInView(videoRef, { margin: "0px" });
+
+  useEffect(() => {
+    if (isInView && videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    } else if (!isInView && videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, [isInView]);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    if (videoRef.current) {
-      videoRef.current.play().catch(e => console.log('Auto-play prevented', e));
-    }
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
   };
 
-  // Touch: toggle overlay + play/pause video
+  // Touch: toggle overlay
   const handleTap = () => {
-    if (videoRef.current) {
-      if (isHovered) {
-        setIsHovered(false);
-        videoRef.current.pause();
-        videoRef.current.currentTime = 0;
-      } else {
-        setIsHovered(true);
-        videoRef.current.play().catch(() => {});
-      }
-    } else {
-      setIsHovered(prev => !prev);
-    }
+    setIsHovered(prev => !prev);
   };
 
   return (
@@ -77,7 +68,7 @@ export const InteractiveVideoCard: React.FC<InteractiveVideoCardProps> = ({
           loop
           playsInline
           preload="metadata"
-          className="w-full h-full object-contain mix-blend-screen opacity-90 transition-opacity duration-300 group-hover:opacity-100"
+          className="w-full h-full object-contain mix-blend-screen opacity-100"
         />
 
         {tag && (
