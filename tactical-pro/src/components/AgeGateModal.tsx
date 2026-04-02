@@ -34,7 +34,7 @@ export default function AgeGateModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[999999] flex items-center justify-center bg-[#000000]/90 backdrop-blur-xl p-4 pointer-events-auto"
+          className="fixed inset-0 z-[999999] flex items-center justify-center bg-[#000000]/90 backdrop-blur-xl p-4 pointer-events-auto cursor-auto"
         >
           <motion.div 
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
